@@ -3,11 +3,13 @@
 ## Build Commands
 - Test all packages: `go test ./...`
 - Test a specific package: `go test ./macos/appkit`
+- Test a specific test function: `go test ./macos/appkit -run TestSpecificFunction`
 - Generate bindings: `go generate ./...`
 - Generate for a framework: `go generate ./macos/appkit`
 - Run linting: `go vet ./...`
 - Regenerate all frameworks: `./generate/tools/regen.sh macos`
 - Clobber generated files: `go run ./generate/tools/clobbergen.go ./macos/[framework]`
+- Generate framework enums: `go run ./generate/tools/enumexport.go [framework] > ./generate/modules/enums/macos/[framework]/enums.go`
 
 ## Code Style
 - Use Go idiomatic code patterns when possible
@@ -22,6 +24,39 @@
   - Symbol prefixes are removed (NSWindow → Window)
   - Selector names converted to PascalCase (setFrame:display: → SetFrameDisplay)
   - Class methods get function variants with class name prefix
+
+## Foundation and Objective-C Usage
+- Create Foundation objects using factory methods, not struct literals:
+  - Use `foundation.ArrayWithObjects([]objc.Object{})` rather than `foundation.Array{}`
+  - Use `foundation.DictionaryWithCapacity(0)` rather than `foundation.Dictionary{}`
+  - Use `foundation.StringWithString("key")` rather than `foundation.String{"key"}`
+  - Use `foundation.DataClass.DataWithBytesLength(dataBytes, dataLength)` for byte arrays
+- For protocols, use the concrete type implementation (`DrawableObject` not `Drawable`)
+- Convert raw Objective-C objects using explicit type casting: `metal.DrawableObject{objcObject}`
+- Use proper enum naming from the generated files, which keeps Apple's prefixes:
+  - Example: `NEVPNStatusConnected` instead of `VPNStatusConnected`
+
+## Objective-C Method Calling Conventions
+- Always use `objc.Call` for method calls, not the deprecated `Send` method:
+  - Use `objc.Call[objc.Void](object, objc.Sel("methodName:"), param)` for methods with no return value
+  - Use `objc.Call[ReturnType](object, objc.Sel("methodWithReturn"), param)` for methods with return values
+- For initialization, separate the alloc and init calls:
+  ```go
+  // Old style (deprecated):
+  obj := objc.Call[objc.Object](SomeClass, objc.Sel("alloc")).Send(objc.Sel("init"))
+  
+  // New style:
+  alloc := objc.Call[objc.Object](SomeClass, objc.Sel("alloc"))
+  obj := objc.Call[objc.Object](alloc, objc.Sel("init"))
+  ```
+- When working with MutableDictionary, use SetObjectForKeyObject method:
+  ```go
+  // Create a mutable dictionary
+  dict := foundation.MutableDictionaryClass.Dictionary()
+  
+  // Set key-value pairs
+  dict.SetObjectForKeyObject(value, key)
+  ```
 
 ## Generation Pipeline
 DarwinKit uses a multi-stage code generation pipeline to create Go bindings for Apple frameworks:
@@ -147,6 +182,7 @@ When implementing a new framework or extending an existing one, follow these gui
 - Create "basic implementations" that include 10-25 core methods per class
 - Prioritize symbols that are fundamental to the framework's functionality
 - Implementation quality is more important than quantity
+- Be comprehensive in delegate implementation - implement all key delegate methods
 
 ### Implementation Approach
 1. **Staged Implementation**:
@@ -159,10 +195,60 @@ When implementing a new framework or extending an existing one, follow these gui
    - Use CanAbstractModuleCoupling for optional dependencies
    - Use CanSkipModuleCoupling for rarely used dependencies
 
-3. **Testing Strategy**:
+3. **Proper Binding Usage**:
+   - Use factory methods instead of struct literals for creating Foundation objects
+   - Use generated enums and constants with correct prefixes (NEVPNStatus* not VPNStatus*)
+   - Properly handle protocol implementations using concrete types (DrawableObject vs Drawable)
+   - Always validate bindings with working examples before considering them complete
+
+4. **Testing Strategy**:
    - Create simple tests that verify binding compilation
    - Create example applications that demonstrate real-world usage
    - Test integrations with other frameworks
+   - Always validate example code works before committing
+
+## Common Issues and Troubleshooting
+
+1. **Class or method redeclaration**:
+   When you get errors about redeclared types or methods, it usually means a custom implementation already exists in a *_custom.go file.
+   - Check for duplicate definitions in generated vs. custom code
+   - Make sure generated code doesn't overlap with custom implementations
+   - For Metal framework, be especially careful as it has many custom implementations that might clash with generated code
+
+2. **Cannot find method/property**:
+   When a method or property appears to be missing:
+   - Check if it's declared in a protocol rather than a class
+   - Ensure all framework dependencies are properly imported
+   - Look for platform-specific availability (macOS vs. iOS)
+
+3. **Type conversion errors**:
+   When getting type conversion errors:
+   - Use the proper type conversion method (foundation.Data_ToBytes, etc.)
+   - Make sure to handle memory management correctly (Retain/Release)
+   - Check if the type is actually a generic id or another protocol type
+   - For byte arrays, use `unsafe.Pointer(&byteSlice[0])` to get a pointer and `uint(len(byteSlice))` for the length
+
+4. **Framework dependency conflicts**:
+   For import cycles or dependency issues:
+   - Update the CanAbstractModuleCoupling or CanSkipModuleCoupling maps
+   - Create wrapper types for the circular dependencies
+
+5. **Send method not found**:
+   If you get errors about 'Send' method being undefined:
+   - Replace all instances of the deprecated `Send` method with `objc.Call`
+   - See the section on "Objective-C Method Calling Conventions" for examples
+   
+6. **Missing SetObjectForKey method**:
+   When working with dictionaries:
+   - MutableDictionary should be used for modifying dictionaries, not Dictionary
+   - Use the proper method `SetObjectForKeyObject` (not SetObjectForKey)
+   - Ensure you're using the correct concrete implementation class
+   
+7. **Framework test failures due to Metal**:
+   When testing frameworks that have Metal dependencies:
+   - Use specific test flags to test only certain functions: `go test -run TestSpecificFunction`
+   - Consider refactoring Metal framework to prevent duplicate declarations
+   - For temporary fixes, isolate the dependency chains
 
 ## Documentation
 - Add good comments for custom functionality
