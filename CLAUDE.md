@@ -88,18 +88,20 @@ Follow these detailed steps to add a new framework:
    - For circular dependencies between frameworks, make one depend on the other as an abstract type
 
 ## Framework Coverage
-- See API_COVERAGE.md for full framework coverage details
-- Recently added modules:
-  - EventKit: Calendar and reminder management (core functionality implemented)
-  - MapKit: Map and location services (basic functionality implemented)
-  - HealthKit: Health data access and management (basic functionality implemented)
-  - HomeKit: Home automation management (basic functionality implemented)
-  - GameKit: Game Center integration (basic functionality implemented)
-  - Security: Keychain and cryptographic operations (basic functionality implemented)
-  - JavaScriptCore: JavaScript execution engine (basic functionality implemented)
-  - UserNotifications: User notification management (basic functionality implemented)
+- See API_ENHANCED_COVERAGE.md for detailed framework coverage analysis and statistics
+- DarwinKit currently implements **41 frameworks** (approximately 45-50% of critical Apple frameworks)
 
-### Implementation Status
+### Implementation Status By Category
+| Category | Implementation Level | Key Frameworks |
+|----------|---------------------|----------------|
+| Core | ~70% | Foundation (60%), CoreFoundation (95%) |
+| UI | ~30% | AppKit (20%) |
+| Graphics & Media | ~35% | CoreGraphics (50%), CoreImage, AVFoundation |
+| Data & Storage | ~40% | CoreData, CoreSpotlight |
+| Device Features | ~25% | CoreLocation, MapKit, HealthKit |
+| Specialized APIs | ~15% | GameKit, JavaScriptCore, Security |
+
+### Recently Added Frameworks (March 2025)
 | Framework | Core Classes | Methods | Status |
 |-----------|--------------|---------|--------|
 | EventKit  | EventStore, Event, Calendar | 10+ | Basic Implementation |
@@ -111,7 +113,16 @@ Follow these detailed steps to add a new framework:
 | JavaScriptCore | Context, Value, VirtualMachine | 25+ | Basic Implementation |
 | UserNotifications | NotificationCenter, NotificationContent, NotificationTrigger | 20+ | Basic Implementation |
 
+### Recommended Next Frameworks
+1. **Core Services** - Critical for file system operations
+2. **Metal** - Modern graphics API (high priority)
+3. **CoreBluetooth** - Device connectivity
+4. **NetworkExtension** - Advanced networking capabilities
+5. **PDFKit** - PDF rendering and manipulation
+
 ## Tools Reference
+
+### Generation Tools
 - List framework constants: `go run ./generate/tools/constant.go macos [framework] [constant]`
 - Verify declaration parsing: `go run ./generate/tools/declcheck.go [framework]`
 - Check parsing coverage %: `go run ./generate/tools/declcheck.go [framework] | grep "Total coverage"`
@@ -119,9 +130,42 @@ Follow these detailed steps to add a new framework:
 - Search symbolsdb: `go run ./generate/tools/lookup.go [prefix]`
 - Find symbol types: `go run ./generate/tools/type.go [typename]`
 - View framework stats: `./generate/tools/stats.sh`
-- Generate coverage report: `go run cmd/tools/report_generator/main.go --coverage="$OUTPUT_DIR/analysis/coverage_report.json" --output="API_COVERAGE.md"`
+- Regenerate all frameworks: `./generate/tools/regen.sh macos`
+
+### Analysis Tools
+- Generate enhanced coverage report: `./cmd/tools/analyze_technologies.sh`
+- Analyze Apple's frameworks: `go run cmd/tools/tech_analyzer/main.go --outdir="./analysis" --count-symbols --list-macos`
+- Generate module entries: `go run cmd/tools/tech_analyzer/main.go --frameworks="[framework1],[framework2]" --gen-modules`
+- Analyze implementation coverage: `go run cmd/tools/report_generator/main.go --coverage="$OUTPUT_DIR/analysis/coverage_report.json" --output="API_COVERAGE.md"`
+
+## Implementation Strategy
+
+When implementing a new framework or extending an existing one, follow these guidelines:
+
+### Implementation Depth
+- Focus on implementing the most commonly used classes and methods first
+- Create "basic implementations" that include 10-25 core methods per class
+- Prioritize symbols that are fundamental to the framework's functionality
+- Implementation quality is more important than quantity
+
+### Implementation Approach
+1. **Staged Implementation**:
+   - Start with core functionality that unlocks the framework's primary features
+   - Add example code that demonstrates practical usage
+   - Add more advanced features in subsequent iterations
+
+2. **Dependency Handling**:
+   - Favor abstract types over forcing implementation of dependent frameworks
+   - Use CanAbstractModuleCoupling for optional dependencies
+   - Use CanSkipModuleCoupling for rarely used dependencies
+
+3. **Testing Strategy**:
+   - Create simple tests that verify binding compilation
+   - Create example applications that demonstrate real-world usage
+   - Test integrations with other frameworks
 
 ## Documentation
 - Add good comments for custom functionality
 - Document memory management expectations for custom methods
 - Reference Apple documentation URLs when appropriate
+- Update API_ENHANCED_COVERAGE.md when adding new frameworks
