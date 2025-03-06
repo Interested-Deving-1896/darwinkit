@@ -28,6 +28,11 @@ func (e EventStore) SaveEvent(event Event, span int, error *foundation.Error) bo
 	return objc.Call[bool](e, objc.Sel("saveEvent:span:error:"), event, span, error)
 }
 
+// CalendarsForEntityType returns an array of calendars for the specified entity type
+func (e EventStore) CalendarsForEntityType(entityType int) foundation.Array {
+	return objc.Call[foundation.Array](e, objc.Sel("calendarsForEntityType:"), entityType)
+}
+
 // Event represents a calendar event
 type Event struct {
 	objc.Object
@@ -39,6 +44,31 @@ var EventClass = objc.GetClass("EKEvent")
 // NewEventWithEventStore creates a new EKEvent instance with the specified event store
 func NewEventWithEventStore(eventStore EventStore) Event {
 	return Event{objc.Call[objc.Object](EventClass, objc.Sel("eventWithEventStore:"), eventStore)}
+}
+
+// SetTitle sets the title of the event
+func (e Event) SetTitle(title foundation.String) {
+	e.Send(objc.Sel("setTitle:"), title)
+}
+
+// SetNotes sets the notes of the event
+func (e Event) SetNotes(notes foundation.String) {
+	e.Send(objc.Sel("setNotes:"), notes)
+}
+
+// SetStartDate sets the start date of the event
+func (e Event) SetStartDate(startDate foundation.Date) {
+	e.Send(objc.Sel("setStartDate:"), startDate)
+}
+
+// SetEndDate sets the end date of the event
+func (e Event) SetEndDate(endDate foundation.Date) {
+	e.Send(objc.Sel("setEndDate:"), endDate)
+}
+
+// SetCalendar sets the calendar of the event
+func (e Event) SetCalendar(calendar objc.Object) {
+	e.Send(objc.Sel("setCalendar:"), calendar)
 }
 
 // Calendar represents a calendar in the event store
