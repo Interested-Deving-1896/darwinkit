@@ -1,6 +1,8 @@
 package security
 
 import (
+	"unsafe"
+
 	"github.com/progrium/darwinkit/objc"
 	"github.com/progrium/darwinkit/macos/foundation"
 )
@@ -12,25 +14,39 @@ type KeychainItem struct {
 
 // Methods to interact with the keychain
 func AddGenericPassword(serviceName string, accountName string, passwordData []byte, itemRef *KeychainItem) OSStatus {
-	service := foundation.String_StringWithString(serviceName)
-	account := foundation.String_StringWithString(accountName)
-	password := foundation.Data_DataWithBytes(passwordData, uint64(len(passwordData)))
+	service := foundation.StringClass.StringWithString(serviceName)
+	account := foundation.StringClass.StringWithString(accountName)
+	
+	// Create data from bytes
+	dataBytes := unsafe.Pointer(&passwordData[0])
+	dataLength := uint(len(passwordData))
+	password := foundation.DataClass.DataWithBytesLength(dataBytes, dataLength)
 	
 	return OSStatus(int(objc.Call[int](objc.GetClass("Security"), objc.Sel("SecKeychainAddGenericPassword:account:passwordData:itemRef:"), 
 		service, account, password, itemRef)))
 }
 
 func FindGenericPassword(serviceName string, accountName string, passwordLength *uint32, passwordData *[]byte, itemRef *KeychainItem) OSStatus {
-	service := foundation.String_StringWithString(serviceName)
-	account := foundation.String_StringWithString(accountName)
+	service := foundation.StringClass.StringWithString(serviceName)
+	account := foundation.StringClass.StringWithString(accountName)
 	
 	var data foundation.Data
 	status := OSStatus(int(objc.Call[int](objc.GetClass("Security"), objc.Sel("SecKeychainFindGenericPassword:account:passwordLength:passwordData:itemRef:"), 
 		service, account, passwordLength, &data, itemRef)))
 	
-	if status == ErrSecSuccess && data.Pointer() != nil {
-		*passwordData = make([]byte, data.Length())
-		data.GetBytes(*passwordData, data.Length())
+	if status == ErrSecSuccess && !data.IsNil() {
+		length := data.Length()
+		buffer := make([]byte, length)
+		
+		// Copy bytes from NSData to Go slice
+		bytePtr := data.Bytes()
+		if bytePtr != nil {
+			for i := uint(0); i < length; i++ {
+				ptr := unsafe.Pointer(uintptr(bytePtr) + uintptr(i))
+				buffer[i] = *(*byte)(ptr)
+			}
+			*passwordData = buffer
+		}
 	}
 	
 	return status
