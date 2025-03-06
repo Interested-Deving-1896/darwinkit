@@ -92,12 +92,18 @@ Follow these detailed steps to add a new framework:
 - Recently added modules:
   - EventKit: Calendar and reminder management (core functionality implemented)
   - MapKit: Map and location services (basic functionality implemented)
+  - HealthKit: Health data access and management (basic functionality implemented)
+  - HomeKit: Home automation management (basic functionality implemented)
+  - GameKit: Game Center integration (basic functionality implemented)
 
 ### Implementation Status
 | Framework | Core Classes | Methods | Status |
 |-----------|--------------|---------|--------|
 | EventKit  | EventStore, Event, Calendar | 10+ | Basic Implementation |
 | MapKit    | MapView, PointAnnotation | 10+ | Basic Implementation |
+| HealthKit | HealthStore, QuantityType, Workout | 15+ | Basic Implementation |
+| HomeKit   | HomeManager, Home, Room, Accessory | 20+ | Basic Implementation |
+| GameKit   | Player, Leaderboard, Achievement | 25+ | Basic Implementation |
 
 ## Tools Reference
 - List framework constants: `go run ./generate/tools/constant.go macos [framework] [constant]`
