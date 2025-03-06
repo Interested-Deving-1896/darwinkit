@@ -52,8 +52,8 @@ func TrimPrefix(symbolName string) string {
 // modules that will cause types to become IObject/unsafe.Pointer or more primitive type
 func CanAbstractModuleCoupling(in string, mod string) bool {
 	mods, ok := map[string][]string{
-		"foundation": []string{"appkit", "coreimage", "corespotlight", "fileprovider", "gameplaykit", "iobluetooth", "uti", "eventkit", "healthkit", "homekit", "gamekit"},
-		"appkit":     []string{"spritekit", "cloudkit", "eventkit", "gamekit", "healthkit"},
+		"foundation": []string{"appkit", "coreimage", "corespotlight", "fileprovider", "gameplaykit", "iobluetooth", "uti", "eventkit", "healthkit", "homekit", "gamekit", "security", "javascriptcore", "usernotifications"},
+		"appkit":     []string{"spritekit", "cloudkit", "eventkit", "gamekit", "healthkit", "usernotifications"},
 		"coreimage":  []string{"appkit"},
 		"coredata":   []string{"corespotlight"},
 		"cloudkit":   []string{"corelocation"},
@@ -61,6 +61,9 @@ func CanAbstractModuleCoupling(in string, mod string) bool {
 		"healthkit":  []string{"corelocation"},
 		"homekit":    []string{"corelocation"},
 		"gamekit":    []string{"corelocation", "cloudkit"},
+		"security":   []string{"foundation"},
+		"javascriptcore": []string{"foundation"},
+		"usernotifications": []string{"foundation"},
 	}[in]
 	if !ok {
 		return false
@@ -99,10 +102,7 @@ func CanSkipModuleCoupling(in string, mod string) bool {
 func CanIgnoreNotFound(p any) bool {
 	mod := strings.TrimPrefix(p.(string), "module not found: ")
 	for _, m := range []string{
-		"Security",
-		"JavaScriptCore",
 		"ImageCaptureCore",
-		"User Notifications",
 		"Core Services",
 		"XPC",
 		"Intents",
@@ -171,4 +171,7 @@ var All = []Module{
 	{"HealthKit", "Health Kit", "healthkit", "HealthKit/HealthKit.h", []string{"HK"}},
 	{"HomeKit", "Home Kit", "homekit", "HomeKit/HomeKit.h", []string{"HM"}},
 	{"GameKit", "Game Kit", "gamekit", "GameKit/GameKit.h", []string{"GK"}},
+	{"Security", "Security", "security", "Security/Security.h", []string{"SEC", "kSEC"}},
+	{"JavaScriptCore", "JavaScript Core", "javascriptcore", "JavaScriptCore/JavaScriptCore.h", []string{"JS"}},
+	{"UserNotifications", "User Notifications", "usernotifications", "UserNotifications/UserNotifications.h", []string{"UN"}},
 }
