@@ -15,7 +15,8 @@ var CentralManagerClass = objc.GetClass("CBCentralManager")
 
 // NewCentralManager creates a new central manager with the specified delegate and dispatch queue
 func NewCentralManager(delegate objc.Object, queue objc.Object) CentralManager {
-	return CentralManager{objc.Call[objc.Object](CentralManagerClass, objc.Sel("alloc")).Send(objc.Sel("initWithDelegate:queue:"), delegate, queue)}
+	alloc := objc.Call[objc.Object](CentralManagerClass, objc.Sel("alloc"))
+	return CentralManager{objc.Call[objc.Object](alloc, objc.Sel("initWithDelegate:queue:"), delegate, queue)}
 }
 
 // State returns the current state of the central manager
@@ -25,22 +26,22 @@ func (cm CentralManager) State() State {
 
 // ScanForPeripheralsWithServices starts scanning for peripherals advertising the specified services
 func (cm CentralManager) ScanForPeripheralsWithServices(serviceUUIDs foundation.Array, options foundation.Dictionary) {
-	cm.Send(objc.Sel("scanForPeripheralsWithServices:options:"), serviceUUIDs, options)
+	objc.Call[objc.Void](cm, objc.Sel("scanForPeripheralsWithServices:options:"), serviceUUIDs, options)
 }
 
 // StopScan stops scanning for peripherals
 func (cm CentralManager) StopScan() {
-	cm.Send(objc.Sel("stopScan"))
+	objc.Call[objc.Void](cm, objc.Sel("stopScan"))
 }
 
 // ConnectPeripheral connects to a peripheral
 func (cm CentralManager) ConnectPeripheral(peripheral Peripheral, options foundation.Dictionary) {
-	cm.Send(objc.Sel("connectPeripheral:options:"), peripheral, options)
+	objc.Call[objc.Void](cm, objc.Sel("connectPeripheral:options:"), peripheral, options)
 }
 
 // CancelPeripheralConnection cancels a peripheral connection
 func (cm CentralManager) CancelPeripheralConnection(peripheral Peripheral) {
-	cm.Send(objc.Sel("cancelPeripheralConnection:"), peripheral)
+	objc.Call[objc.Void](cm, objc.Sel("cancelPeripheralConnection:"), peripheral)
 }
 
 // RetrievePeripheralsWithIdentifiers retrieves peripherals by their identifiers
@@ -78,27 +79,27 @@ func (p Peripheral) Services() foundation.Array {
 
 // DiscoverServices discovers services on the peripheral
 func (p Peripheral) DiscoverServices(serviceUUIDs foundation.Array) {
-	p.Send(objc.Sel("discoverServices:"), serviceUUIDs)
+	objc.Call[objc.Void](p, objc.Sel("discoverServices:"), serviceUUIDs)
 }
 
 // DiscoverCharacteristicsForService discovers characteristics for a service
 func (p Peripheral) DiscoverCharacteristicsForService(characteristicUUIDs foundation.Array, service Service) {
-	p.Send(objc.Sel("discoverCharacteristics:forService:"), characteristicUUIDs, service)
+	objc.Call[objc.Void](p, objc.Sel("discoverCharacteristics:forService:"), characteristicUUIDs, service)
 }
 
 // ReadValueForCharacteristic reads the value for a characteristic
 func (p Peripheral) ReadValueForCharacteristic(characteristic Characteristic) {
-	p.Send(objc.Sel("readValueForCharacteristic:"), characteristic)
+	objc.Call[objc.Void](p, objc.Sel("readValueForCharacteristic:"), characteristic)
 }
 
 // WriteValueForCharacteristic writes a value for a characteristic
-func (p Peripheral) WriteValueForCharacteristic(data foundation.Data, characteristic Characteristic, type WriteType) {
-	p.Send(objc.Sel("writeValue:forCharacteristic:type:"), data, characteristic, type)
+func (p Peripheral) WriteValueForCharacteristic(data foundation.Data, characteristic Characteristic, writeType WriteType) {
+	objc.Call[objc.Void](p, objc.Sel("writeValue:forCharacteristic:type:"), data, characteristic, writeType)
 }
 
 // SetNotifyValueForCharacteristic sets the notify value for a characteristic
 func (p Peripheral) SetNotifyValueForCharacteristic(enabled bool, characteristic Characteristic) {
-	p.Send(objc.Sel("setNotifyValue:forCharacteristic:"), enabled, characteristic)
+	objc.Call[objc.Void](p, objc.Sel("setNotifyValue:forCharacteristic:"), enabled, characteristic)
 }
 
 // Service represents a peripheral's service
@@ -190,7 +191,8 @@ var PeripheralManagerClass = objc.GetClass("CBPeripheralManager")
 
 // NewPeripheralManager creates a new peripheral manager with the specified delegate and dispatch queue
 func NewPeripheralManager(delegate objc.Object, queue objc.Object) PeripheralManager {
-	return PeripheralManager{objc.Call[objc.Object](PeripheralManagerClass, objc.Sel("alloc")).Send(objc.Sel("initWithDelegate:queue:"), delegate, queue)}
+	alloc := objc.Call[objc.Object](PeripheralManagerClass, objc.Sel("alloc"))
+	return PeripheralManager{objc.Call[objc.Object](alloc, objc.Sel("initWithDelegate:queue:"), delegate, queue)}
 }
 
 // State returns the current state of the peripheral manager
@@ -200,27 +202,27 @@ func (pm PeripheralManager) State() State {
 
 // AddService adds a service to the peripheral manager
 func (pm PeripheralManager) AddService(service objc.Object) {
-	pm.Send(objc.Sel("addService:"), service)
+	objc.Call[objc.Void](pm, objc.Sel("addService:"), service)
 }
 
 // RemoveService removes a service from the peripheral manager
 func (pm PeripheralManager) RemoveService(service objc.Object) {
-	pm.Send(objc.Sel("removeService:"), service)
+	objc.Call[objc.Void](pm, objc.Sel("removeService:"), service)
 }
 
 // RemoveAllServices removes all services from the peripheral manager
 func (pm PeripheralManager) RemoveAllServices() {
-	pm.Send(objc.Sel("removeAllServices"))
+	objc.Call[objc.Void](pm, objc.Sel("removeAllServices"))
 }
 
 // StartAdvertising starts advertising peripheral data
 func (pm PeripheralManager) StartAdvertising(advertisementData foundation.Dictionary) {
-	pm.Send(objc.Sel("startAdvertising:"), advertisementData)
+	objc.Call[objc.Void](pm, objc.Sel("startAdvertising:"), advertisementData)
 }
 
 // StopAdvertising stops advertising peripheral data
 func (pm PeripheralManager) StopAdvertising() {
-	pm.Send(objc.Sel("stopAdvertising"))
+	objc.Call[objc.Void](pm, objc.Sel("stopAdvertising"))
 }
 
 // MutableService represents a mutable service
@@ -233,17 +235,18 @@ var MutableServiceClass = objc.GetClass("CBMutableService")
 
 // NewMutableService creates a new mutable service with the specified UUID and primary status
 func NewMutableService(UUID foundation.UUID, isPrimary bool) MutableService {
-	return MutableService{Service{objc.Call[objc.Object](MutableServiceClass, objc.Sel("alloc")).Send(objc.Sel("initWithType:primary:"), UUID, isPrimary)}}
+	alloc := objc.Call[objc.Object](MutableServiceClass, objc.Sel("alloc"))
+	return MutableService{Service{objc.Call[objc.Object](alloc, objc.Sel("initWithType:primary:"), UUID, isPrimary)}}
 }
 
 // SetCharacteristics sets the service's characteristics
 func (ms MutableService) SetCharacteristics(characteristics foundation.Array) {
-	ms.Send(objc.Sel("setCharacteristics:"), characteristics)
+	objc.Call[objc.Void](ms, objc.Sel("setCharacteristics:"), characteristics)
 }
 
 // SetIncludedServices sets the service's included services
 func (ms MutableService) SetIncludedServices(includedServices foundation.Array) {
-	ms.Send(objc.Sel("setIncludedServices:"), includedServices)
+	objc.Call[objc.Void](ms, objc.Sel("setIncludedServices:"), includedServices)
 }
 
 // MutableCharacteristic represents a mutable characteristic
@@ -256,17 +259,18 @@ var MutableCharacteristicClass = objc.GetClass("CBMutableCharacteristic")
 
 // NewMutableCharacteristic creates a new mutable characteristic with the specified UUID, properties, value, and permissions
 func NewMutableCharacteristic(UUID foundation.UUID, properties CharacteristicProperties, value foundation.Data, permissions AttributePermissions) MutableCharacteristic {
-	return MutableCharacteristic{Characteristic{objc.Call[objc.Object](MutableCharacteristicClass, objc.Sel("alloc")).Send(objc.Sel("initWithType:properties:value:permissions:"), UUID, properties, value, permissions)}}
+	alloc := objc.Call[objc.Object](MutableCharacteristicClass, objc.Sel("alloc"))
+	return MutableCharacteristic{Characteristic{objc.Call[objc.Object](alloc, objc.Sel("initWithType:properties:value:permissions:"), UUID, properties, value, permissions)}}
 }
 
 // SetValue sets the characteristic's value
 func (mc MutableCharacteristic) SetValue(value foundation.Data) {
-	mc.Send(objc.Sel("setValue:"), value)
+	objc.Call[objc.Void](mc, objc.Sel("setValue:"), value)
 }
 
 // SetDescriptors sets the characteristic's descriptors
 func (mc MutableCharacteristic) SetDescriptors(descriptors foundation.Array) {
-	mc.Send(objc.Sel("setDescriptors:"), descriptors)
+	objc.Call[objc.Void](mc, objc.Sel("setDescriptors:"), descriptors)
 }
 
 // CBUUID represents a Bluetooth UUID
