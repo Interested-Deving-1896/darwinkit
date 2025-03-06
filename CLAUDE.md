@@ -90,8 +90,14 @@ Follow these detailed steps to add a new framework:
 ## Framework Coverage
 - See API_COVERAGE.md for full framework coverage details
 - Recently added modules:
-  - EventKit: Calendar and reminder management
-  - MapKit: Map and location services
+  - EventKit: Calendar and reminder management (core functionality implemented)
+  - MapKit: Map and location services (basic functionality implemented)
+
+### Implementation Status
+| Framework | Core Classes | Methods | Status |
+|-----------|--------------|---------|--------|
+| EventKit  | EventStore, Event, Calendar | 10+ | Basic Implementation |
+| MapKit    | MapView, PointAnnotation | 10+ | Basic Implementation |
 
 ## Tools Reference
 - List framework constants: `go run ./generate/tools/constant.go macos [framework] [constant]`
