@@ -95,6 +95,9 @@ Follow these detailed steps to add a new framework:
   - HealthKit: Health data access and management (basic functionality implemented)
   - HomeKit: Home automation management (basic functionality implemented)
   - GameKit: Game Center integration (basic functionality implemented)
+  - Security: Keychain and cryptographic operations (basic functionality implemented)
+  - JavaScriptCore: JavaScript execution engine (basic functionality implemented)
+  - UserNotifications: User notification management (basic functionality implemented)
 
 ### Implementation Status
 | Framework | Core Classes | Methods | Status |
@@ -104,6 +107,9 @@ Follow these detailed steps to add a new framework:
 | HealthKit | HealthStore, QuantityType, Workout | 15+ | Basic Implementation |
 | HomeKit   | HomeManager, Home, Room, Accessory | 20+ | Basic Implementation |
 | GameKit   | Player, Leaderboard, Achievement | 25+ | Basic Implementation |
+| Security  | Certificate, Identity, Trust, Policy | 15+ | Basic Implementation |
+| JavaScriptCore | Context, Value, VirtualMachine | 25+ | Basic Implementation |
+| UserNotifications | NotificationCenter, NotificationContent, NotificationTrigger | 20+ | Basic Implementation |
 
 ## Tools Reference
 - List framework constants: `go run ./generate/tools/constant.go macos [framework] [constant]`
