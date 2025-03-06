@@ -52,12 +52,15 @@ func TrimPrefix(symbolName string) string {
 // modules that will cause types to become IObject/unsafe.Pointer or more primitive type
 func CanAbstractModuleCoupling(in string, mod string) bool {
 	mods, ok := map[string][]string{
-		"foundation": []string{"appkit", "coreimage", "corespotlight", "fileprovider", "gameplaykit", "iobluetooth", "uti", "eventkit"},
-		"appkit":     []string{"spritekit", "cloudkit", "eventkit"},
+		"foundation": []string{"appkit", "coreimage", "corespotlight", "fileprovider", "gameplaykit", "iobluetooth", "uti", "eventkit", "healthkit", "homekit", "gamekit"},
+		"appkit":     []string{"spritekit", "cloudkit", "eventkit", "gamekit", "healthkit"},
 		"coreimage":  []string{"appkit"},
 		"coredata":   []string{"corespotlight"},
 		"cloudkit":   []string{"corelocation"},
 		"eventkit":   []string{"corelocation"},
+		"healthkit":  []string{"corelocation"},
+		"homekit":    []string{"corelocation"},
+		"gamekit":    []string{"corelocation", "cloudkit"},
 	}[in]
 	if !ok {
 		return false
@@ -78,6 +81,9 @@ func CanSkipModuleCoupling(in string, mod string) bool {
 		"coreimage":  []string{"avfoundation", "quartz"},
 		"quartzcore": []string{"scenekit"},
 		"eventkit":   []string{"contacts", "mapkit"},
+		"healthkit":  []string{"coredata", "eventkit"},
+		"homekit":    []string{"coredata", "eventkit"},
+		"gamekit":    []string{"uikit", "coredata"},
 	}[in]
 	if !ok {
 		return false
@@ -162,4 +168,7 @@ var All = []Module{
 	{"MediaPlayer", "Media Player", "mediaplayer", "MediaPlayer/MediaPlayer.h", []string{"MP"}},
 	{"EventKit", "Event Kit", "eventkit", "EventKit/EventKit.h", []string{"EK"}},
 	{"MapKit", "Map Kit", "mapkit", "MapKit/MapKit.h", []string{"MK"}},
+	{"HealthKit", "Health Kit", "healthkit", "HealthKit/HealthKit.h", []string{"HK"}},
+	{"HomeKit", "Home Kit", "homekit", "HomeKit/HomeKit.h", []string{"HM"}},
+	{"GameKit", "Game Kit", "gamekit", "GameKit/GameKit.h", []string{"GK"}},
 }
