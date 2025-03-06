@@ -52,11 +52,12 @@ func TrimPrefix(symbolName string) string {
 // modules that will cause types to become IObject/unsafe.Pointer or more primitive type
 func CanAbstractModuleCoupling(in string, mod string) bool {
 	mods, ok := map[string][]string{
-		"foundation": []string{"appkit", "coreimage", "corespotlight", "fileprovider", "gameplaykit", "iobluetooth", "uti"},
-		"appkit":     []string{"spritekit", "cloudkit"},
+		"foundation": []string{"appkit", "coreimage", "corespotlight", "fileprovider", "gameplaykit", "iobluetooth", "uti", "eventkit"},
+		"appkit":     []string{"spritekit", "cloudkit", "eventkit"},
 		"coreimage":  []string{"appkit"},
 		"coredata":   []string{"corespotlight"},
 		"cloudkit":   []string{"corelocation"},
+		"eventkit":   []string{"corelocation"},
 	}[in]
 	if !ok {
 		return false
@@ -76,6 +77,7 @@ func CanSkipModuleCoupling(in string, mod string) bool {
 		"appkit":     []string{},
 		"coreimage":  []string{"avfoundation", "quartz"},
 		"quartzcore": []string{"scenekit"},
+		"eventkit":   []string{"contacts", "mapkit"},
 	}[in]
 	if !ok {
 		return false
@@ -97,7 +99,6 @@ func CanIgnoreNotFound(p any) bool {
 		"User Notifications",
 		"Core Services",
 		"XPC",
-		"MapKit",
 		"Intents",
 		"QuickLook",
 		"force feedback",
@@ -159,4 +160,6 @@ var All = []Module{
 	{"MetalPerformanceShadersGraph", "Metal Performance Shaders Graph", "mpsgraph", "MetalPerformanceShadersGraph/MetalPerformanceShadersGraph.h", []string{"MPSGraph"}},
 	{"MetalPerformanceShaders", "Metal Performance Shaders", "mps", "MetalPerformanceShaders/MetalPerformanceShaders.h", []string{"MPS"}},
 	{"MediaPlayer", "Media Player", "mediaplayer", "MediaPlayer/MediaPlayer.h", []string{"MP"}},
+	{"EventKit", "Event Kit", "eventkit", "EventKit/EventKit.h", []string{"EK"}},
+	{"MapKit", "Map Kit", "mapkit", "MapKit/MapKit.h", []string{"MK"}},
 }
