@@ -20,8 +20,8 @@ func TestUserNotificationsValid(t *testing.T) {
 	assert.NotNil(t, NotificationSoundClass)
 
 	// Test the constants
-	assert.Equal(t, AuthorizationOptionBadge, AuthorizationOptions(1))
-	assert.Equal(t, AuthorizationOptionSound, AuthorizationOptions(2))
-	assert.Equal(t, AuthorizationOptionAlert, AuthorizationOptions(4))
-	assert.Equal(t, AuthorizationOptionCarPlay, AuthorizationOptions(8))
+	assert.Equal(t, uint(AuthorizationOptionBadge), uint(1))
+	assert.Equal(t, uint(AuthorizationOptionSound), uint(2))
+	assert.Equal(t, uint(AuthorizationOptionAlert), uint(4))
+	assert.Equal(t, uint(AuthorizationOptionCarPlay), uint(8))
 }

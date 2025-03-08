@@ -15,7 +15,9 @@ var ContextClass = objc.GetClass("JSContext")
 
 // NewContext creates a new JavaScript context
 func NewContext() Context {
-	return Context{objc.Call[objc.Object](ContextClass, objc.Sel("alloc")).Send(objc.Sel("init"))}
+	alloc := objc.Call[objc.Object](ContextClass, objc.Sel("alloc"))
+	initialized := objc.Call[objc.Object](alloc, objc.Sel("init"))
+	return Context{initialized}
 }
 
 // EvaluateScript evaluates a JavaScript script in the context
@@ -25,7 +27,7 @@ func (c Context) EvaluateScript(script foundation.String, exception *Value) Valu
 
 // SetExceptionHandler sets the exception handler for the context
 func (c Context) SetExceptionHandler(handler objc.Object) {
-	c.Send(objc.Sel("setExceptionHandler:"), handler)
+	objc.Call[objc.Void](c, objc.Sel("setExceptionHandler:"), handler)
 }
 
 // GlobalObject returns the global object for the context
@@ -73,9 +75,9 @@ func NewValueWithNewObject(context Context) Value {
 
 // NewValueWithNewArray creates a new JavaScript array value
 func NewValueWithNewArray(context Context, values []Value) Value {
-	array := foundation.Array_Array()
+	array := foundation.ArrayClass.Array()
 	for _, value := range values {
-		array.AddObject(value)
+		objc.Call[objc.Void](array, objc.Sel("addObject:"), value)
 	}
 	return Value{objc.Call[objc.Object](ValueClass, objc.Sel("valueWithNewArrayInContext:"), context)}
 }
@@ -155,20 +157,24 @@ var VirtualMachineClass = objc.GetClass("JSVirtualMachine")
 
 // NewVirtualMachine creates a new JavaScript virtual machine
 func NewVirtualMachine() VirtualMachine {
-	return VirtualMachine{objc.Call[objc.Object](VirtualMachineClass, objc.Sel("alloc")).Send(objc.Sel("init"))}
+	alloc := objc.Call[objc.Object](VirtualMachineClass, objc.Sel("alloc"))
+	initialized := objc.Call[objc.Object](alloc, objc.Sel("init"))
+	return VirtualMachine{initialized}
 }
 
 // Context creates a new JavaScript context for the virtual machine
 func (vm VirtualMachine) Context() Context {
-	return Context{objc.Call[objc.Object](ContextClass, objc.Sel("alloc")).Send(objc.Sel("initWithVirtualMachine:"), vm)}
+	alloc := objc.Call[objc.Object](ContextClass, objc.Sel("alloc"))
+	initialized := objc.Call[objc.Object](alloc, objc.Sel("initWithVirtualMachine:"), vm)
+	return Context{initialized}
 }
 
 // AddManagedReference adds a managed reference to the virtual machine
 func (vm VirtualMachine) AddManagedReference(object objc.Object, owner objc.Object) {
-	vm.Send(objc.Sel("addManagedReference:withOwner:"), object, owner)
+	objc.Call[objc.Void](vm, objc.Sel("addManagedReference:withOwner:"), object, owner)
 }
 
 // RemoveManagedReference removes a managed reference from the virtual machine
 func (vm VirtualMachine) RemoveManagedReference(object objc.Object, owner objc.Object) {
-	vm.Send(objc.Sel("removeManagedReference:withOwner:"), object, owner)
+	objc.Call[objc.Void](vm, objc.Sel("removeManagedReference:withOwner:"), object, owner)
 }
