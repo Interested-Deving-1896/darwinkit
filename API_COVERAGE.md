@@ -1,6 +1,6 @@
 # Darwinkit API Coverage Report
 
-**Generated:** March 2, 2025
+**Generated:** March 6, 2025
 
 ## Overview
 
