@@ -55,7 +55,28 @@ Direct commits to OSP or OOC are detected and opened as PRs back to `Interested-
 ## Contributors
 
 <!-- AI:start:contributors -->
-_Contributors pending._
+| Contributor | Commits |
+|---|---|
+| [@progrium](https://github.com/progrium) | 172 |
+| [@tmc](https://github.com/tmc) | 25 |
+| [@flexzuu](https://github.com/flexzuu) | 24 |
+| [@programmingkidx](https://github.com/programmingkidx) | 14 |
+| [@mgood](https://github.com/mgood) | 7 |
+| [@firelizzard18](https://github.com/firelizzard18) | 5 |
+| [@Interested-Deving-1896](https://github.com/Interested-Deving-1896) | 5 |
+| [@mvrilo](https://github.com/mvrilo) | 2 |
+| [@fserb](https://github.com/fserb) | 2 |
+| [@catilac](https://github.com/catilac) | 2 |
+| [@aidansteele](https://github.com/aidansteele) | 2 |
+| [@alessiodionisi](https://github.com/alessiodionisi) | 1 |
+| [@bradfitz](https://github.com/bradfitz) | 1 |
+| [@Charliego3](https://github.com/Charliego3) | 1 |
+| [@revilon1991](https://github.com/revilon1991) | 1 |
+| [@Bob620](https://github.com/Bob620) | 1 |
+| [@mkrautz](https://github.com/mkrautz) | 1 |
+| [@TotallyGamerJet](https://github.com/TotallyGamerJet) | 1 |
+| [@taramk](https://github.com/taramk) | 1 |
+| [@yummyweb](https://github.com/yummyweb) | 1 |
 <!-- AI:end:contributors -->
 
 ## Origins
